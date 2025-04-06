@@ -1,0 +1,109 @@
+class Product:
+    def __init__(self, id, name, price):
+        self.id = id
+        self.name = name
+        self.price = price
+
+    def __str__(self):
+        return f"[{self.id}] {self.name} - Rp{self.price:,.0f}"
+
+
+class CartItem:
+    def __init__(self, product, quantity):
+        self.product = product
+        self.quantity = quantity
+
+    def total_price(self):
+        return self.product.price * self.quantity
+
+
+class ShoppingCart:
+    def __init__(self):
+        self.items = []
+
+    def add_item(self, product, quantity):
+        for item in self.items:
+            if item.product.id == product.id:
+                item.quantity += quantity
+                return
+        self.items.append(CartItem(product, quantity))
+
+    def view_cart(self):
+        if not self.items:
+            print("Keranjang belanja kosong.")
+            return
+        print("Isi Keranjang:")
+        for item in self.items:
+            print(f"- {item.product.name} x {item.quantity} = Rp{item.total_price():,.0f}")
+        print(f"Total: Rp{self.total():,.0f}")
+
+    def total(self):
+        return sum(item.total_price() for item in self.items)
+
+    def checkout(self):
+        print("Checkout berhasil!")
+        print(f"Total pembayaran: Rp{self.total():,.0f}")
+        self.items.clear()
+
+
+class Store:
+    def __init__(self):
+        self.products = [
+            Product(1, "Laptop", 7000000),
+            Product(2, "Smartphone", 3000000),
+            Product(3, "Headset", 250000),
+        ]
+        self.cart = ShoppingCart()
+
+    def show_products(self):
+        print("\nDaftar Produk:")
+        for product in self.products:
+            print(product)
+
+    def find_product_by_id(self, product_id):
+        for product in self.products:
+            if product.id == product_id:
+                return product
+        return None
+
+    def start(self):
+        while True:
+            print("\n1. Lihat Produk")
+            print("2. Tambah ke Keranjang")
+            print("3. Lihat Keranjang")
+            print("4. Checkout")
+            print("5. Keluar")
+            choice = input("Pilih menu: ")
+
+            if choice == "1":
+                self.show_products()
+            elif choice == "2":
+                self.show_products()
+                try:
+                    product_id = int(input("Masukkan ID produk: "))
+                    quantity = int(input("Jumlah: "))
+                    product = self.find_product_by_id(product_id)
+                    if product:
+                        self.cart.add_item(product, quantity)
+                        print("Produk berhasil ditambahkan ke keranjang.")
+                    else:
+                        print("Produk tidak ditemukan.")
+                except ValueError:
+                    print("Input tidak valid.")
+            elif choice == "3":
+                self.cart.view_cart()
+            elif choice == "4":
+                self.cart.view_cart()
+                confirm = input("Lanjutkan checkout? (y/n): ")
+                if confirm.lower() == "y":
+                    self.cart.checkout()
+            elif choice == "5":
+                print("Terima kasih telah berbelanja!")
+                break
+            else:
+                print("Pilihan tidak valid.")
+
+
+if __name__ == "__main__":
+    store = Store()
+    store.start()
